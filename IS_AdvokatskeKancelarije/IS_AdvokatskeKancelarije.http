@@ -1,0 +1,6 @@
+@IS_AdvokatskeKancelarije_HostAddress = http://localhost:5285
+
+GET {{IS_AdvokatskeKancelarije_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
