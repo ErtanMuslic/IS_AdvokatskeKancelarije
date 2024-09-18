@@ -1,10 +1,10 @@
-﻿namespace IS_AdvokatskeKancelarije.Models
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace IS_AdvokatskeKancelarije.Models
 {
-    public class User
+    public class User : IdentityUser
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string password { get; set; }
-        public string Email { get; set; }
+        public string? Name { get; set; }
+   
     }
 }
