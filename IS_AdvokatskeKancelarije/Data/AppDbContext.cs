@@ -8,6 +8,6 @@ namespace IS_AdvokatskeKancelarije.Data
     
         public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(options)
         {
-            public DbSet<User> Users { get; set; }
+            public DbSet<Client> Clients { get; set; }
         }
 }
