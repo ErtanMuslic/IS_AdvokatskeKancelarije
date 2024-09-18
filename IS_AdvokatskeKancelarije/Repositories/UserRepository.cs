@@ -33,7 +33,9 @@ namespace IS_AdvokatskeKancelarije.Repositories
             _mapper = mapper;
         }
 
+
         public record UserSession(string Email, List<string> Roles);
+
         public async Task<string> Register(UserDTO userDTO)
         {
             var newUser = _mapper.Map<User>(userDTO);
@@ -67,25 +69,7 @@ namespace IS_AdvokatskeKancelarije.Repositories
             }
         }
 
-        public void Delete(string id)
-        {
-            var user = _context.Users.Find(id);
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-            }
-        }
-
-        public IEnumerable<User> GetAll()
-        {
-            return _context.Users.ToList();
-        }
-
-        public User GetById(string id)
-        {
-            return _context.Users.Find(id);
-        }
-
+         
         public async Task<string> LoginAccount(LoginDTO loginDTO)
         {
             if (loginDTO == null) return "Login container is empty";
@@ -107,11 +91,6 @@ namespace IS_AdvokatskeKancelarije.Repositories
             string token = GenerateToken(userSession);
             return token;
 
-        }
-
-        public bool SaveChanges()
-        {
-            return _context.SaveChanges() > 0;
         }
 
         private string GenerateToken(UserSession user)
@@ -137,11 +116,36 @@ namespace IS_AdvokatskeKancelarije.Repositories
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public void Delete(string id)
+        {
+            var user = _context.Users.Find(id);
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+            }
+        }
+
+        public IEnumerable<User> GetAll()
+        {
+            return _context.Users.ToList();
+        }
+
+        public User GetById(string id)
+        {
+            return _context.Users.Find(id);
+        }
+
         public async Task Update(User user)
         {
             _context.Users.Attach(user);
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
+
+        public bool SaveChanges()
+        {
+            return _context.SaveChanges() > 0;
+        }
+
     }
 }
