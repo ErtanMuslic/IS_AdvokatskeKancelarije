@@ -16,6 +16,11 @@ namespace IS_AdvokatskeKancelarije.Mapping
             //Client
             CreateMap<Client, ClientDTO>();
             CreateMap<ClientDTO, Client>();
+
+            //Document
+            CreateMap<Document, DocumentDTO>();
+            CreateMap<DocumentDTO, Document>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
         }
     }
 }
