@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IS_AdvokatskeKancelarije.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240918195737_Init")]
+    [Migration("20240919005546_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -24,6 +24,58 @@ namespace IS_AdvokatskeKancelarije.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("CaseUser", b =>
+                {
+                    b.Property<Guid>("CasesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("text");
+
+                    b.HasKey("CasesId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("UserCases", (string)null);
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Case", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CaseType")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeadLines")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("Cases");
+                });
 
             modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Client", b =>
                 {
@@ -50,6 +102,147 @@ namespace IS_AdvokatskeKancelarije.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Document", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Author")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CaseId");
+
+                    b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Invoice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("HourlyPrice")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Hours")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("LawyerId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ServiceDescription")
+                        .HasColumnType("text");
+
+                    b.Property<float?>("TotalPrice")
+                        .HasColumnType("real");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CaseId");
+
+                    b.HasIndex("LawyerId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Meeting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<float>("Duration")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Participants")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CaseId");
+
+                    b.ToTable("Meetings");
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Trial", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Court")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<float>("Duration")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Evidence")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Judge")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Judgement")
+                        .HasColumnType("text");
+
+                    b.Property<float>("PreTrialPreparation")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CaseId");
+
+                    b.ToTable("Trials");
                 });
 
             modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.User", b =>
@@ -251,6 +444,88 @@ namespace IS_AdvokatskeKancelarije.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CaseUser", b =>
+                {
+                    b.HasOne("IS_AdvokatskeKancelarije.Models.Case", null)
+                        .WithMany()
+                        .HasForeignKey("CasesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IS_AdvokatskeKancelarije.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Case", b =>
+                {
+                    b.HasOne("IS_AdvokatskeKancelarije.Models.Client", "Client")
+                        .WithMany("Cases")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Document", b =>
+                {
+                    b.HasOne("IS_AdvokatskeKancelarije.Models.Case", "Case")
+                        .WithMany("Documents")
+                        .HasForeignKey("CaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Case");
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Invoice", b =>
+                {
+                    b.HasOne("IS_AdvokatskeKancelarije.Models.Case", "Case")
+                        .WithMany()
+                        .HasForeignKey("CaseId");
+
+                    b.HasOne("IS_AdvokatskeKancelarije.Models.User", "Lawyer")
+                        .WithMany()
+                        .HasForeignKey("LawyerId");
+
+                    b.HasOne("IS_AdvokatskeKancelarije.Models.User", "User")
+                        .WithMany("Invoices")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Case");
+
+                    b.Navigation("Lawyer");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Meeting", b =>
+                {
+                    b.HasOne("IS_AdvokatskeKancelarije.Models.Case", "Case")
+                        .WithMany("Meetings")
+                        .HasForeignKey("CaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Case");
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Trial", b =>
+                {
+                    b.HasOne("IS_AdvokatskeKancelarije.Models.Case", "Case")
+                        .WithMany("Trials")
+                        .HasForeignKey("CaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Case");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -300,6 +575,25 @@ namespace IS_AdvokatskeKancelarije.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Case", b =>
+                {
+                    b.Navigation("Documents");
+
+                    b.Navigation("Meetings");
+
+                    b.Navigation("Trials");
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Client", b =>
+                {
+                    b.Navigation("Cases");
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.User", b =>
+                {
+                    b.Navigation("Invoices");
                 });
 #pragma warning restore 612, 618
         }

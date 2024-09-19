@@ -6,5 +6,8 @@ namespace IS_AdvokatskeKancelarije.Models
     {
         public string? Name { get; set; }
    
+
+        public ICollection<Case> Cases { get; set; }
+        public ICollection<Invoice> Invoices { get; set; }
     }
 }

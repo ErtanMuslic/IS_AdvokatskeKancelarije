@@ -8,5 +8,6 @@
         public string Email { get; set; }
         public string Phone_Number { get; set; }
 
+        public ICollection<Case> Cases {  get; set; }
     }
 }

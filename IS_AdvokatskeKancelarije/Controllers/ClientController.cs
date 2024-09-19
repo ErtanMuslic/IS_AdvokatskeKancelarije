@@ -23,7 +23,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // POST: api/Client/AddClient
         [HttpPost("AddClient")]
-        [Authorize(Roles = "Admin , Lawler")]
+        [Authorize(Roles = "Admin,Lawler")]
         public async Task<IActionResult> CreateClient([FromBody] ClientDTO clientDTO)
         {
             if (clientDTO == null)
@@ -48,7 +48,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // GET: api/Client/{id}
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin, Lawyer")]
+        [Authorize(Roles = "Admin,Lawyer")]
         public IActionResult GetClientById(Guid id)
         {
             var client = _clientRepository.GetClientById(id);

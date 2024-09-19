@@ -61,7 +61,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
             // GET: api/User/{id}
             [HttpGet("{id}")]
-            [Authorize(Roles = "Admin, Lawyer")]  
+            [Authorize(Roles = "Admin,Lawyer")]  
             public IActionResult GetUserById(string id)
             {
                 var user = _userRepository.GetById(id);
