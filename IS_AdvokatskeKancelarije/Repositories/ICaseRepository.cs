@@ -12,5 +12,7 @@ namespace IS_AdvokatskeKancelarije.Repositories
         void DeleteCase(Guid id);
 
         bool SaveChanges();
+
+
     }
 }
