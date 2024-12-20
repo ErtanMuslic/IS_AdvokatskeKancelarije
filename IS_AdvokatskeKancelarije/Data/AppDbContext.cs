@@ -57,6 +57,12 @@ namespace IS_AdvokatskeKancelarije.Data
                 .HasMany(u => u.Invoices)
                 .WithOne(i => i.User)
                 .HasForeignKey(i => i.UserId);
+
+            //Case To Invoices relationship 
+            modelBuilder.Entity<Case>()
+                .HasMany(u => u.Invoices)
+                .WithOne(i => i.Case)
+                .HasForeignKey(i => i.CaseId);
         }
     }
 }

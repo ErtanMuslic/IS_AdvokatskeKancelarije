@@ -57,10 +57,10 @@ namespace IS_AdvokatskeKancelarije.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Address = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Phone_Number = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Address = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    Phone_Number = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -178,12 +178,12 @@ namespace IS_AdvokatskeKancelarije.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    DeadLines = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CaseType = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    DeadLines = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CaseType = table.Column<int>(type: "integer", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: true),
                     ClientId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
@@ -225,34 +225,28 @@ namespace IS_AdvokatskeKancelarije.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    LawyerId = table.Column<string>(type: "text", nullable: true),
-                    CaseId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    CaseId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ServiceDescription = table.Column<string>(type: "text", nullable: true),
                     Hours = table.Column<int>(type: "integer", nullable: true),
                     HourlyPrice = table.Column<int>(type: "integer", nullable: true),
-                    TotalPrice = table.Column<float>(type: "real", nullable: true),
-                    UserId = table.Column<string>(type: "text", nullable: false)
+                    TotalPrice = table.Column<float>(type: "real", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Invoices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Invoices_AspNetUsers_LawyerId",
-                        column: x => x.LawyerId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Invoices_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Invoices_Cases_CaseId",
                         column: x => x.CaseId,
                         principalTable: "Cases",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -265,7 +259,7 @@ namespace IS_AdvokatskeKancelarije.Migrations
                     Subject = table.Column<string>(type: "text", nullable: true),
                     Participants = table.Column<string>(type: "text", nullable: true),
                     Duration = table.Column<float>(type: "real", nullable: false),
-                    CaseId = table.Column<Guid>(type: "uuid", nullable: false)
+                    CaseId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -274,8 +268,7 @@ namespace IS_AdvokatskeKancelarije.Migrations
                         name: "FK_Meetings_Cases_CaseId",
                         column: x => x.CaseId,
                         principalTable: "Cases",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -288,9 +281,9 @@ namespace IS_AdvokatskeKancelarije.Migrations
                     Evidence = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Judgement = table.Column<string>(type: "text", nullable: true),
-                    PreTrialPreparation = table.Column<float>(type: "real", nullable: false),
-                    Duration = table.Column<float>(type: "real", nullable: false),
-                    CaseId = table.Column<Guid>(type: "uuid", nullable: false)
+                    PreTrialPreparation = table.Column<float>(type: "real", nullable: true),
+                    Duration = table.Column<float>(type: "real", nullable: true),
+                    CaseId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -299,8 +292,7 @@ namespace IS_AdvokatskeKancelarije.Migrations
                         name: "FK_Trials_Cases_CaseId",
                         column: x => x.CaseId,
                         principalTable: "Cases",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -378,11 +370,6 @@ namespace IS_AdvokatskeKancelarije.Migrations
                 name: "IX_Invoices_CaseId",
                 table: "Invoices",
                 column: "CaseId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Invoices_LawyerId",
-                table: "Invoices",
-                column: "LawyerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoices_UserId",

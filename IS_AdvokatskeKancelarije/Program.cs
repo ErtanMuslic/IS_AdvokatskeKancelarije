@@ -2,6 +2,9 @@ using System.Text;
 using IS_AdvokatskeKancelarije.Data;
 using IS_AdvokatskeKancelarije.Models;
 using IS_AdvokatskeKancelarije.Repositories;
+using IS_AdvokatskeKancelarije.Repositories.Invoices;
+using IS_AdvokatskeKancelarije.Repositories.Meetings;
+using IS_AdvokatskeKancelarije.Repositories.Trials;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +23,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+builder.Services.AddScoped<ICaseRepository,CaseRepository>();
+builder.Services.AddScoped<IMeetingRepository, MeetingRepository>();
+builder.Services.AddScoped<ITrialsRepository,TrialsRepository>();
+builder.Services.AddScoped<IInvoicesRepository,InvoicesRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 

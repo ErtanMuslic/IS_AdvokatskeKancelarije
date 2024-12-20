@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IS_AdvokatskeKancelarije.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240919005546_Init")]
+    [Migration("20241220165245_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -46,28 +46,25 @@ namespace IS_AdvokatskeKancelarije.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("CaseType")
+                    b.Property<int?>("CaseType")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeadLines")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Status")
+                    b.Property<int?>("Status")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -84,19 +81,15 @@ namespace IS_AdvokatskeKancelarije.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Phone_Number")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -141,7 +134,7 @@ namespace IS_AdvokatskeKancelarije.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CaseId")
+                    b.Property<Guid>("CaseId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
@@ -153,9 +146,6 @@ namespace IS_AdvokatskeKancelarije.Migrations
                     b.Property<int?>("Hours")
                         .HasColumnType("integer");
 
-                    b.Property<string>("LawyerId")
-                        .HasColumnType("text");
-
                     b.Property<string>("ServiceDescription")
                         .HasColumnType("text");
 
@@ -163,14 +153,11 @@ namespace IS_AdvokatskeKancelarije.Migrations
                         .HasColumnType("real");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CaseId");
-
-                    b.HasIndex("LawyerId");
 
                     b.HasIndex("UserId");
 
@@ -183,7 +170,7 @@ namespace IS_AdvokatskeKancelarije.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CaseId")
+                    b.Property<Guid?>("CaseId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("Date")
@@ -214,7 +201,7 @@ namespace IS_AdvokatskeKancelarije.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CaseId")
+                    b.Property<Guid?>("CaseId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Court")
@@ -223,7 +210,7 @@ namespace IS_AdvokatskeKancelarije.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<float>("Duration")
+                    b.Property<float?>("Duration")
                         .HasColumnType("real");
 
                     b.Property<string>("Evidence")
@@ -235,7 +222,7 @@ namespace IS_AdvokatskeKancelarije.Migrations
                     b.Property<string>("Judgement")
                         .HasColumnType("text");
 
-                    b.Property<float>("PreTrialPreparation")
+                    b.Property<float?>("PreTrialPreparation")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
@@ -484,22 +471,16 @@ namespace IS_AdvokatskeKancelarije.Migrations
             modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Invoice", b =>
                 {
                     b.HasOne("IS_AdvokatskeKancelarije.Models.Case", "Case")
-                        .WithMany()
-                        .HasForeignKey("CaseId");
-
-                    b.HasOne("IS_AdvokatskeKancelarije.Models.User", "Lawyer")
-                        .WithMany()
-                        .HasForeignKey("LawyerId");
-
-                    b.HasOne("IS_AdvokatskeKancelarije.Models.User", "User")
                         .WithMany("Invoices")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("CaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Case");
+                    b.HasOne("IS_AdvokatskeKancelarije.Models.User", "User")
+                        .WithMany("Invoices")
+                        .HasForeignKey("UserId");
 
-                    b.Navigation("Lawyer");
+                    b.Navigation("Case");
 
                     b.Navigation("User");
                 });
@@ -508,9 +489,7 @@ namespace IS_AdvokatskeKancelarije.Migrations
                 {
                     b.HasOne("IS_AdvokatskeKancelarije.Models.Case", "Case")
                         .WithMany("Meetings")
-                        .HasForeignKey("CaseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CaseId");
 
                     b.Navigation("Case");
                 });
@@ -519,9 +498,7 @@ namespace IS_AdvokatskeKancelarije.Migrations
                 {
                     b.HasOne("IS_AdvokatskeKancelarije.Models.Case", "Case")
                         .WithMany("Trials")
-                        .HasForeignKey("CaseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CaseId");
 
                     b.Navigation("Case");
                 });
@@ -580,6 +557,8 @@ namespace IS_AdvokatskeKancelarije.Migrations
             modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Case", b =>
                 {
                     b.Navigation("Documents");
+
+                    b.Navigation("Invoices");
 
                     b.Navigation("Meetings");
 
