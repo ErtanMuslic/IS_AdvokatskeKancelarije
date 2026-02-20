@@ -5,6 +5,7 @@ using IS_AdvokatskeKancelarije.Repositories;
 using IS_AdvokatskeKancelarije.Repositories.Invoices;
 using IS_AdvokatskeKancelarije.Repositories.Meetings;
 using IS_AdvokatskeKancelarije.Repositories.Trials;
+using IS_AdvokatskeKancelarije.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,11 @@ builder.Services.AddScoped<ICaseRepository,CaseRepository>();
 builder.Services.AddScoped<IMeetingRepository, MeetingRepository>();
 builder.Services.AddScoped<ITrialsRepository,TrialsRepository>();
 builder.Services.AddScoped<IInvoicesRepository,InvoicesRepository>();
+builder.Services.AddScoped<EmailService>();
+
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings")
+    );
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 

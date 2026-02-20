@@ -2,6 +2,7 @@
 using IS_AdvokatskeKancelarije.Data;
 using IS_AdvokatskeKancelarije.DTOs;
 using IS_AdvokatskeKancelarije.Models;
+using IS_AdvokatskeKancelarije.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace IS_AdvokatskeKancelarije.Repositories.Meetings
@@ -11,13 +12,16 @@ namespace IS_AdvokatskeKancelarije.Repositories.Meetings
 
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly EmailService _emailService;
 
         public MeetingRepository(
             AppDbContext context,
-            IMapper mapper)
+            IMapper mapper,
+            EmailService emailService)
         {
             _context = context;
             _mapper = mapper;
+            _emailService = emailService;
         }
         public async Task<string> AddMeeting(MeetingDTO meetingDTO)
         {
@@ -25,6 +29,16 @@ namespace IS_AdvokatskeKancelarije.Repositories.Meetings
             _context.Meetings.Add(newMeeting);
 
             await _context.SaveChangesAsync();
+
+            var caseId = await _context.Cases.FindAsync(meetingDTO.CaseId);
+            Console.Write(caseId);
+            var client = await _context.Clients.FindAsync(caseId.ClientId);
+            Console.WriteLine(client);
+            await _emailService.SendEmail(
+                client.Email,
+                "Meeting Scheduled",
+                $"Meeting scheduled on {newMeeting.Date}  at  {newMeeting.Location}"
+                );
 
             return "Meeting Created";
         }

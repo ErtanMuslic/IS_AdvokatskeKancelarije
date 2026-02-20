@@ -2,7 +2,9 @@
 using IS_AdvokatskeKancelarije.Data;
 using IS_AdvokatskeKancelarije.DTOs;
 using IS_AdvokatskeKancelarije.Models;
+using IS_AdvokatskeKancelarije.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IS_AdvokatskeKancelarije.Repositories.Trials
 {
@@ -11,13 +13,18 @@ namespace IS_AdvokatskeKancelarije.Repositories.Trials
 
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly EmailService _emailService;
+
 
         public TrialsRepository(
             AppDbContext context,
-            IMapper mapper)
+            IMapper mapper,
+            EmailService emailService)
         {
             _context = context;
             _mapper = mapper;
+            _emailService = emailService;
+
         }
 
 
@@ -27,6 +34,16 @@ namespace IS_AdvokatskeKancelarije.Repositories.Trials
             _context.Trials.Add(newTrial);
 
             await _context.SaveChangesAsync();
+
+            var caseId = await _context.Cases.FindAsync(trialDTO.CaseId);
+            Console.Write(caseId);
+            var client = await _context.Clients.FindAsync(caseId.ClientId);
+            Console.WriteLine(client);
+            await _emailService.SendEmail(
+                client.Email,
+                "Trial Scheduled",
+                $"Your trial is scheduled on {newTrial.CreatedDate} at {newTrial.Court}"
+                );
 
             return "Trial Created";
 
