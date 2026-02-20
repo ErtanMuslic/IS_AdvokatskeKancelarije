@@ -22,12 +22,12 @@ namespace IS_AdvokatskeKancelarije.Controllers
         // POST: api/Document/Add
         [HttpPost("Add")]
         [Authorize(Roles = "Paralegal,Lawyer,Admin")]
-        public async Task<IActionResult> CreateDocument(Guid CaseId, [FromBody] DocumentDTO documentDTO)
+        public async Task<IActionResult> CreateDocument([FromBody] DocumentDTO documentDTO)
         {
             if (documentDTO == null)
                 return BadRequest("Document data is empty");
 
-            var result = await _documentRepository.AddDocument(documentDTO,CaseId);
+            var result = await _documentRepository.AddDocument(documentDTO);
 
             return Ok(result);
         }

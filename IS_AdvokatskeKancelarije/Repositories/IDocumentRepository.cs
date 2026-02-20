@@ -5,7 +5,7 @@ namespace IS_AdvokatskeKancelarije.Repositories
 {
     public interface IDocumentRepository
     {
-        Task<string> AddDocument(DocumentDTO documentDTO,Guid CaseId);
+        Task<string> AddDocument(DocumentDTO documentDTO);
         IEnumerable<Document> GetAll();
         Document GetById(Guid id);
         Task Update(Document document);

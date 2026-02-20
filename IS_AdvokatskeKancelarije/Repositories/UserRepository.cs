@@ -1,10 +1,12 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using IS_AdvokatskeKancelarije.Data;
 using IS_AdvokatskeKancelarije.DTOs;
 using IS_AdvokatskeKancelarije.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -24,7 +26,7 @@ namespace IS_AdvokatskeKancelarije.Repositories
             RoleManager<IdentityRole> roleManager,
             UserManager<User> userManager,
             IConfiguration config,
-            IMapper mapper) 
+            IMapper mapper)
         {
             _context = context;
             _roleManager = roleManager;
@@ -69,7 +71,73 @@ namespace IS_AdvokatskeKancelarije.Repositories
             }
         }
 
-         
+        public async Task<string> UpdateRole(string userId,bool promotion)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is null)
+                return $"User with ID {userId} not found.";
+
+            var currentRoles = await _userManager.GetRolesAsync(user);
+
+           
+
+            var currentRole = currentRoles.FirstOrDefault();
+            if (string.IsNullOrEmpty(currentRole))
+                return "User has no role assigned.";
+
+            string newRole = currentRole switch
+            {
+                "Paralegal" when promotion => "Lawyer",
+                "Lawyer" when !promotion => "Paralegal",
+                _ => null
+            };
+
+            if (newRole is null)
+                return "Invalid promotion/demotion request or unsupported role transition.";
+
+            var removeRoleResult = await _userManager.RemoveFromRoleAsync(user, currentRole);
+            if (!removeRoleResult.Succeeded)
+                return $"Failed to remove user from role '{currentRole}': {string.Join(", ", removeRoleResult.Errors.Select(e => e.Description))}";
+
+            var addRoleResult = await _userManager.AddToRoleAsync(user, newRole);
+            if (!addRoleResult.Succeeded)
+                return $"Failed to assign user to role '{newRole}': {string.Join(", ", addRoleResult.Errors.Select(e => e.Description))}";
+
+            return $"User role successfully updated to '{newRole}'.";
+        }
+
+
+        public async  Task<List<string>> GetUserRoles(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if(user == null)
+            {
+                return null;
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return roles.ToList();
+        }
+
+        public async Task<string> ChangePasswordByEmail(ChangePasswordDTO changePasswordDTO)
+        {
+            var user = await _userManager.FindByEmailAsync(changePasswordDTO.Email);
+            if (user == null)
+            {
+                return "User not found.";
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, changePasswordDTO.CurrentPassword, changePasswordDTO.NewPassword);
+            if (!result.Succeeded)
+            {
+                return $"Error: {string.Join(", ", result.Errors.Select(e => e.Description))}";
+            }
+
+            return "Password changed successfully.";
+        }
+
+
         public async Task<string> LoginAccount(LoginDTO loginDTO)
         {
             if (loginDTO == null) return "Login container is empty";
@@ -81,7 +149,7 @@ namespace IS_AdvokatskeKancelarije.Repositories
             }
 
             var checkUserPassword = await _userManager.CheckPasswordAsync(getUser, loginDTO.Password);
-            if (getUser is null)
+            if (!checkUserPassword)
             {
                 return "Invalid email/Password";
             }
@@ -125,6 +193,13 @@ namespace IS_AdvokatskeKancelarije.Repositories
             }
         }
 
+        public IEnumerable<User> GetCaseUsers(Guid caseId)
+        {
+            return _context.Users
+                  .Where(c => c.Cases.Any(u => u.Id == caseId))
+                  .ToList();
+        }
+
         public IEnumerable<User> GetAll()
         {
             return _context.Users.ToList();
@@ -142,10 +217,45 @@ namespace IS_AdvokatskeKancelarije.Repositories
             await _context.SaveChangesAsync();
         }
 
+
+
+        public async Task<bool> AddUserToCase(string userId, Guid caseId)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                var caseEntity = await _context.Cases.FindAsync(caseId);
+
+                if (caseEntity.Users == null)
+                {
+                    caseEntity.Users = new List<User>();
+                }
+                if (user.Cases == null)
+                {
+                    user.Cases = new List<Case>();
+                }
+
+                if (caseEntity.Users.Count >= 3)
+                {
+                    throw new InvalidOperationException("This case already has the maximum number of users (3).");
+                }
+                caseEntity.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+       
+
         public bool SaveChanges()
         {
             return _context.SaveChanges() > 0;
         }
-
     }
 }

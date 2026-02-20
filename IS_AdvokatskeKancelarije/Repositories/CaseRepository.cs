@@ -31,12 +31,38 @@ namespace IS_AdvokatskeKancelarije.Repositories
 
         public IEnumerable<Case> GetCases()
         {
-            return _context.Cases.ToList();
+            return _context.Cases
+                   .Include(u => u.Users)
+                   .Include(c => c.Client)
+                   .Include(d => d.Documents)
+                   .Include(m => m.Meetings)
+                   .Include(t => t.Trials)
+                   .Include(i => i.Invoices)
+                   .ToList();
         }
 
         public Case GetCaseById(Guid id)
         {
             return _context.Cases.Find(id);
+        }
+
+        public IEnumerable<Case> GetClientCases(Guid caseId)
+        {
+            return _context.Cases
+                .Where(c => c.ClientId == caseId).ToList();
+        }
+
+        public IEnumerable<Case> GetUserCases(string userId)
+        {
+            return _context.Cases
+                  .Where(c => c.Users.Any(u => u.Id == userId))
+                  .Include(u => u.Users)
+                  .Include(c => c.Client)
+                  .Include(d => d.Documents)
+                  .Include(m => m.Meetings)
+                  .Include(t => t.Trials)
+                  .Include(i => i.Invoices)
+                  .ToList();
         }
 
         public async Task UpdateCase(Case Case)
@@ -61,5 +87,6 @@ namespace IS_AdvokatskeKancelarije.Repositories
             return _context.SaveChanges() > 0;
         }
 
+        
     }
 }

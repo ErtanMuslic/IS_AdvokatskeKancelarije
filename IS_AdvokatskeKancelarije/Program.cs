@@ -75,6 +75,12 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+app.UseCors(policy =>
+    policy.WithOrigins("http://localhost:4200") // Angular dev server
+          .AllowAnyMethod()
+          .AllowAnyHeader());
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

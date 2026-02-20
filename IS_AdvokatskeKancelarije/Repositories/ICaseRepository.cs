@@ -8,6 +8,10 @@ namespace IS_AdvokatskeKancelarije.Repositories
         Task<string> AddCase(CaseDTO caseDTO);
         IEnumerable<Case> GetCases();
         Case GetCaseById(Guid id);
+
+        IEnumerable<Case> GetClientCases(Guid caseId);
+
+        public IEnumerable<Case> GetUserCases(string userId);
         Task UpdateCase(Case Case);
         void DeleteCase(Guid id);
 

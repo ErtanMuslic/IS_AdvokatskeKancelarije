@@ -1,4 +1,6 @@
-﻿namespace IS_AdvokatskeKancelarije.Models
+﻿using System.Text.Json.Serialization;
+
+namespace IS_AdvokatskeKancelarije.Models
 {
     public class Document
     {
@@ -10,6 +12,8 @@
         public string? Type { get; set; }
 
         public Guid CaseId { get; set; }
+
+        [JsonIgnore]
         public Case? Case { get; set; }
     }
 }

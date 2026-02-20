@@ -18,9 +18,9 @@ namespace IS_AdvokatskeKancelarije.Repositories
             _context = context;
             _mapper = mapper;
         }
-        public async Task<string> AddDocument(DocumentDTO documentDTO,Guid CaseId)
+        public async Task<string> AddDocument(DocumentDTO documentDTO)
         {
-            documentDTO.CaseId = CaseId;
+            //documentDTO.CaseId = CaseId;
             var newDocument = _mapper.Map<Document>(documentDTO);
             _context.Documents.Add(newDocument);
 

@@ -14,6 +14,10 @@ namespace IS_AdvokatskeKancelarije.Mapping
             CreateMap<UserDTO, User>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Name));
 
+            //User
+            CreateMap<User, ProfileDTO>();
+            CreateMap<ProfileDTO, User>();
+
             //Client
             CreateMap<Client, ClientDTO>();
             CreateMap<ClientDTO, Client>();

@@ -1,4 +1,6 @@
-﻿namespace IS_AdvokatskeKancelarije.Models
+﻿using System.Text.Json.Serialization;
+
+namespace IS_AdvokatskeKancelarije.Models
 {
     public class Client
     {
@@ -8,6 +10,7 @@
         public string? Email { get; set; }
         public string? Phone_Number { get; set; }
 
+        [JsonIgnore]
         public ICollection<Case>? Cases {  get; set; }
     }
 }

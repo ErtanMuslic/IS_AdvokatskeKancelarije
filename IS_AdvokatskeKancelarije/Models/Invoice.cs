@@ -1,10 +1,15 @@
-﻿namespace IS_AdvokatskeKancelarije.Models
+﻿using System.Text.Json.Serialization;
+
+namespace IS_AdvokatskeKancelarije.Models
 {
     public class Invoice
     {
         public Guid Id { get; set; }
+        [JsonIgnore]
         public User? User { get; set; }
         public string? UserId { get; set; }
+
+        [JsonIgnore]
         public Case? Case { get; set; }
         public Guid CaseId { get; set; }
         public DateTime CreatedDate { get; set; }
