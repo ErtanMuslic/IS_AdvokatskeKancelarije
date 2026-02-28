@@ -22,7 +22,7 @@ namespace IS_AdvokatskeKancelarije.Services
             message.To.Add(new MailboxAddress("", toEmail));
             message.Subject = subject;
 
-            message.Body = new TextPart("html")
+            message.Body = new TextPart("plain")
             {
                 Text = body
             };

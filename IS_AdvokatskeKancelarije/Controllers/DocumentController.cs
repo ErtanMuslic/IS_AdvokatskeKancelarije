@@ -34,7 +34,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // GET: api/Document/all
         [HttpGet("all")]
-        //[Authorize(Roles = "Admin")]  
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]  
         public IActionResult GetAllDocuments()
         {
             var Documents = _documentRepository.GetAll();
@@ -55,7 +55,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // PUT: api/Document/{id}
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]
         public async Task<IActionResult> UpdateDocument(Guid id, [FromBody] DocumentDTO documentDTO)
         {
             if (documentDTO == null)

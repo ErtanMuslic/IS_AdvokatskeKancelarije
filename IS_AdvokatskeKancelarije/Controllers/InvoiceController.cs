@@ -22,7 +22,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // POST: api/Invoice/AddInvoice
         [HttpPost("AddInvoice")]
-        [Authorize(Roles = "Admin,Lawler")]
+        [Authorize(Roles = "Admin,Lawyer")]
         public async Task<IActionResult> CreateInvoice([FromBody] InvoiceDTO invoiceDTO)
         {
             if (invoiceDTO == null)
@@ -38,7 +38,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // GET: api/Invoice/all
         [HttpGet("all")]
-        //[Authorize(Roles = "Admin")]  
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]  
         public IActionResult GetAllInvoices()
         {
             var invoices = _invoiceRepository.GetInvoices();
@@ -47,7 +47,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // GET: api/Invoice/{id}
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Lawyer")]
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]
         public IActionResult GetInvoiceById(Guid id)
         {
             var invoice = _invoiceRepository.GetInvoiceById(id);
@@ -59,7 +59,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // PUT: api/Invoice/{id}
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Lawyer")]
         public async Task<IActionResult> UpdateInvoice(Guid id, [FromBody] InvoiceDTO invoiceDTO)
         {
             if (invoiceDTO == null)

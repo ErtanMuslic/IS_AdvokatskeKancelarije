@@ -96,7 +96,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // GET: api/User/all
         [HttpGet("all")]
-        //[Authorize(Roles = "Admin")]  
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]  
         public IActionResult GetAllUsers()
         {
             var users = _userRepository.GetAll();
@@ -105,7 +105,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // GET: api/User/{id}
         [HttpGet("{id}")]
-        //[Authorize(Roles = "Admin,Lawyer")]  
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]  
         public IActionResult GetUserById(string id)
         {
             var user = _userRepository.GetById(id);
@@ -118,7 +118,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         //GET: api/User/{caseId}
         [HttpGet("Case/{caseId}")]
-        //[Authorize(Roles = "Admin,Lawyer")]
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]
         public IActionResult GetUserCases(Guid caseId)
         {
             var Users = _userRepository.GetCaseUsers(caseId);
@@ -186,7 +186,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
                 // POST: api/User/{id}
                 [HttpPost("{id}/{caseId}")]
-                //[Authorize(Roles = "Admin")]
+                [Authorize(Roles = "Admin,Lawyer")]
                 public async Task<IActionResult> AddCase(string id,Guid caseId)
                 {
                     var result = await _userRepository.AddUserToCase(id,caseId);
@@ -195,8 +195,21 @@ namespace IS_AdvokatskeKancelarije.Controllers
                         return StatusCode(500, "Error adding case to the user");
 
                     return Ok(new { message = "User added to case successfully" });
-            }
+                }
+
+                // DELETE: api/User/{id}
+                [HttpDelete("{id}/{caseId}")]
+                [Authorize(Roles = "Admin,Lawyer")]
+                public async Task<IActionResult> DeleteCaseFromUser(string id, Guid caseId)
+                {
+                    var result = await _userRepository.RemoveUserFromCase(id, caseId);
+
+                    if (!result)
+                        return StatusCode(500, "Error removing case from the user");
+
+                    return Ok(new { message = "User removed from case successfully" });
+                }
 
 
-}
+    }
 }

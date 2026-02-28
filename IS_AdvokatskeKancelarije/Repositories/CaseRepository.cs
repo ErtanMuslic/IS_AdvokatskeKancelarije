@@ -67,7 +67,7 @@ namespace IS_AdvokatskeKancelarije.Repositories
 
         public async Task UpdateCase(Case Case)
         {
-            _context.Cases.Attach(Case);
+            //_context.Cases.Attach(Case);
             _context.Entry(Case).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
@@ -79,6 +79,13 @@ namespace IS_AdvokatskeKancelarije.Repositories
             {
                 _context.Cases.Remove(casse);
             }
+        }
+
+        public async Task<Case> GetCaseByIdWithUsers(Guid id)
+        {
+            return await _context.Cases
+                .Include(c => c.Users)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
 

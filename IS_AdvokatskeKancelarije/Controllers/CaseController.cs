@@ -22,7 +22,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // POST: api/Case/AddCase
         [HttpPost("AddCase")]
-        [Authorize(Roles = "Admin,Lawler")]
+        [Authorize(Roles = "Admin,Lawyer")]
         public async Task<IActionResult> CreateCase([FromBody] CaseDTO CaseDTO)
         {
             if (CaseDTO == null)
@@ -38,7 +38,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // GET: api/Case/all
         [HttpGet("all")]
-        //[Authorize(Roles = "Admin")]  
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]  
         public IActionResult GetAllCases()
         {
             var Cases = _caseRepository.GetCases();
@@ -47,7 +47,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // GET: api/Case/{id}
         [HttpGet("{id}")]
-        //[Authorize(Roles = "Admin,Lawyer")]
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]
         public IActionResult GetCaseById(Guid id)
         {
             var Case = _caseRepository.GetCaseById(id);
@@ -59,7 +59,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         //GET: api/Case/{clientId}
         [HttpGet("Client{clientId}")]
-        //[Authorize(Roles = "Admin,Lawyer")]
+        [Authorize(Roles = "Admin,Lawyer")]
         public IActionResult GetClientCases(Guid clientId)
         {
             var Cases = _caseRepository.GetClientCases(clientId);
@@ -71,7 +71,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         //GET: api/Case/{userId}
         [HttpGet("User{userId}")]
-        //[Authorize(Roles = "Admin,Lawyer")]
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]
         public IActionResult GetUserCases(string userId)
         {
             var Cases = _caseRepository.GetUserCases(userId);
@@ -83,7 +83,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // PUT: api/Case/{id}
         [HttpPut("{id}")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateCase(Guid id, [FromBody] CaseDTO CaseDTO)
         {
             if (CaseDTO == null)
@@ -103,7 +103,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // PUT: api/Case/{id}
         [HttpPut("Resolve/{id}")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Lawyer")]
         public async Task<IActionResult> ResolveCase(Guid id)
         {
             var Case = _caseRepository.GetCaseById(id);
@@ -116,9 +116,25 @@ namespace IS_AdvokatskeKancelarije.Controllers
             return Ok(new { message = "Case updated successfully" });
         }
 
+        // PUT: api/Case/{id}
+        [HttpPut("isActive/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> isActive(Guid id)
+        {
+            var casse = await _caseRepository.GetCaseByIdWithUsers(id); 
+            if (casse == null)
+                return NotFound("Case not found");
+
+            if (casse.Users != null && casse.Users.Count > 0)
+                casse.Status = Enums.Status.Active;
+
+            await _caseRepository.UpdateCase(casse);
+            return Ok(new { message = "Case updated successfully" });
+        }
+
         // DELETE: api/Case/{id}
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteCase(Guid id)
         {
             var Case = _caseRepository.GetCaseById(id);

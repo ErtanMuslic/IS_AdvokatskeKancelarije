@@ -22,7 +22,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // POST: api/Trial/AddTrial
         [HttpPost("AddTrial")]
-        [Authorize(Roles = "Admin,Lawler")]
+        [Authorize(Roles = "Admin,Lawyer")]
         public async Task<IActionResult> CreateTrial([FromBody] TrialDTO trialDTO)
         {
             if (trialDTO == null)
@@ -38,7 +38,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // GET: api/Trial/all
         [HttpGet("all")]
-        //[Authorize(Roles = "Admin")]  
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]  
         public IActionResult GetAllTrials()
         {
             var trials = _trialRepository.GetTrials();
@@ -47,7 +47,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // GET: api/Trial/{id}
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Lawyer")]
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]
         public IActionResult GetTrialById(Guid id)
         {
             var trial = _trialRepository.GetTrialById(id);

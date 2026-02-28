@@ -224,7 +224,10 @@ namespace IS_AdvokatskeKancelarije.Repositories
             try
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                var caseEntity = await _context.Cases.FindAsync(caseId);
+                var caseEntity = await _context.Cases
+                    .Include(c => c.Users)
+                    .FirstOrDefaultAsync(c => c.Id == caseId);
+
 
                 if (caseEntity.Users == null)
                 {
@@ -240,6 +243,11 @@ namespace IS_AdvokatskeKancelarije.Repositories
                     throw new InvalidOperationException("This case already has the maximum number of users (3).");
                 }
                 caseEntity.Users.Add(user);
+                if (caseEntity.Status != Enums.Status.Closed)
+                {
+                    caseEntity.Status = Enums.Status.Active;
+                }
+
                 await _context.SaveChangesAsync();
 
                 return true;
@@ -251,7 +259,37 @@ namespace IS_AdvokatskeKancelarije.Repositories
             }
         }
 
-       
+        public async Task<bool> RemoveUserFromCase(string userId, Guid caseId)
+        {
+            try
+            {
+                var caseEntity = await _context.Cases
+                    .Include(c => c.Users)
+                    .FirstOrDefaultAsync(c => c.Id == caseId);
+
+                if (caseEntity == null)
+                    throw new Exception("Case not found.");
+
+                var user = caseEntity.Users
+                    .FirstOrDefault(u => u.Id == userId);
+
+                if (user == null)
+                    throw new Exception("User not assigned to this case.");
+
+                caseEntity.Users.Remove(user);
+
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+
 
         public bool SaveChanges()
         {

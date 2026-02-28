@@ -36,15 +36,28 @@ namespace IS_AdvokatskeKancelarije.Repositories.Trials
             await _context.SaveChangesAsync();
 
             var caseId = await _context.Cases.FindAsync(trialDTO.CaseId);
-            Console.Write(caseId);
             var client = await _context.Clients.FindAsync(caseId.ClientId);
-            Console.WriteLine(client);
-            await _emailService.SendEmail(
-                client.Email,
-                "Trial Scheduled",
-                $"Your trial is scheduled on {newTrial.CreatedDate} at {newTrial.Court}"
-                );
+            string emailBody = $@"Dear {client.Name},
 
+We would like to inform you that a trial has been scheduled regarding your case '{caseId.Name}'.
+
+Trial Details:
+- Court: {newTrial.Court}
+- Judge: {newTrial.Judge}
+- Date: {newTrial.CreatedDate:dddd, MMMM dd, yyyy}
+- Pre-Trial Preparation: {newTrial.PreTrialPreparation}
+- Evidence: {newTrial.Evidence}
+
+Please ensure you are available at the specified time. If you have any questions or concerns,
+please do not hesitate to contact us at your earliest convenience.
+
+We kindly ask you to confirm your attendance by replying to this email.
+
+Kind regards,
+S & B Law Firm
+Legal Department";
+
+            await _emailService.SendEmail(client.Email, "Trial Scheduled - S & B Law Firm", emailBody);
             return "Trial Created";
 
         }
@@ -63,6 +76,30 @@ namespace IS_AdvokatskeKancelarije.Repositories.Trials
         {
             _context.Trials.Attach(trial);
             _context.Entry(trial).State = EntityState.Modified;
+
+            var caseId = await _context.Cases.FindAsync(trial.CaseId);
+            var client = await _context.Clients.FindAsync(caseId.ClientId);
+            string emailBody = $@"Dear {client.Name},
+
+We would like to inform you that a trial has been updated regarding your case '{caseId.Name}'.
+
+Trial Details:
+- Court: {trial.Court}
+- Judge: {trial.Judge}
+- Date: {trial.CreatedDate:dddd, MMMM dd, yyyy}
+- Pre-Trial Preparation: {trial.PreTrialPreparation}
+- Evidence: {trial.Evidence}
+
+Please take note of the updated details. If you have any questions or concerns,
+please do not hesitate to contact us at your earliest convenience.
+
+We kindly ask you to confirm your attendance by replying to this email.
+
+Kind regards,
+S & B Law Firm
+Legal Department";
+
+            await _emailService.SendEmail(client.Email, "Trial Scheduled - S & B Law Firm", emailBody);
             await _context.SaveChangesAsync();
         }
 

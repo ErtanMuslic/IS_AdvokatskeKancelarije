@@ -22,7 +22,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // POST: api/Meeting/AddMeeting
         [HttpPost("AddMeeting")]
-        [Authorize(Roles = "Admin,Lawler")]
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]
         public async Task<IActionResult> CreateMeeting([FromBody] MeetingDTO meetingDTO)
         {
             if (meetingDTO == null)
@@ -38,7 +38,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // GET: api/Meeting/all
         [HttpGet("all")]
-        //[Authorize(Roles = "Admin")]  
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]  
         public IActionResult GetAllMeetings()
         {
             var meetings = _meetingRepository.GetMeetings();
@@ -47,7 +47,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // GET: api/Meeting/{id}
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Lawyer")]
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]
         public IActionResult GetMeetingById(Guid id)
         {
             var meeting = _meetingRepository.GetMeetingById(id);
@@ -59,7 +59,7 @@ namespace IS_AdvokatskeKancelarije.Controllers
 
         // PUT: api/Meeting/{id}
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Lawyer,Paralegal")]
         public async Task<IActionResult> UpdateMeeting(Guid id, [FromBody] MeetingDTO meetingDTO)
         {
             if (meetingDTO == null)

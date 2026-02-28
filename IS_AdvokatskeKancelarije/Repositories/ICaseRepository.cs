@@ -15,6 +15,7 @@ namespace IS_AdvokatskeKancelarije.Repositories
         Task UpdateCase(Case Case);
         void DeleteCase(Guid id);
 
+        Task<Case> GetCaseByIdWithUsers(Guid id);
         bool SaveChanges();
 
 

@@ -8,6 +8,8 @@ namespace IS_AdvokatskeKancelarije.Repositories
 
         IEnumerable<User> GetAll();
         Task<bool> AddUserToCase(string userId,Guid caseId);
+
+        Task<bool> RemoveUserFromCase(string userId, Guid caseId);
         User GetById(string id);
         Task<string> Register(UserDTO user);
         Task Update(User user);
