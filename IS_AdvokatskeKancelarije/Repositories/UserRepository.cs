@@ -278,6 +278,11 @@ namespace IS_AdvokatskeKancelarije.Repositories
 
                 caseEntity.Users.Remove(user);
 
+                if(caseEntity.Users.Count == 0)
+                {
+                    caseEntity.Status = Enums.Status.Pending;
+                }
+
                 await _context.SaveChangesAsync();
 
                 return true;

@@ -106,13 +106,31 @@ namespace IS_AdvokatskeKancelarije.Migrations
                     b.Property<Guid>("CaseId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ContentType")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("IndexError")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IndexStatus")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OriginalFileName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StoredFileName")
                         .HasColumnType("text");
 
                     b.Property<string>("Type")
@@ -123,6 +141,40 @@ namespace IS_AdvokatskeKancelarije.Migrations
                     b.HasIndex("CaseId");
 
                     b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.DocumentChunk", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ChunkIndex")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<float[]>("Embedding")
+                        .HasColumnType("real[]");
+
+                    b.Property<int?>("PageNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CaseId");
+
+                    b.HasIndex("DocumentId");
+
+                    b.ToTable("DocumentChunks");
                 });
 
             modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Invoice", b =>
@@ -465,6 +517,17 @@ namespace IS_AdvokatskeKancelarije.Migrations
                     b.Navigation("Case");
                 });
 
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.DocumentChunk", b =>
+                {
+                    b.HasOne("IS_AdvokatskeKancelarije.Models.Document", "Document")
+                        .WithMany("Chunks")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Document");
+                });
+
             modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Invoice", b =>
                 {
                     b.HasOne("IS_AdvokatskeKancelarije.Models.Case", "Case")
@@ -565,6 +628,11 @@ namespace IS_AdvokatskeKancelarije.Migrations
             modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Client", b =>
                 {
                     b.Navigation("Cases");
+                });
+
+            modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.Document", b =>
+                {
+                    b.Navigation("Chunks");
                 });
 
             modelBuilder.Entity("IS_AdvokatskeKancelarije.Models.User", b =>

@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IS_AdvokatskeKancelarije.Data
 {
-    public class AppDbContext : IdentityDbContext<User> 
+    public class AppDbContext : IdentityDbContext<User>
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) 
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
@@ -17,6 +17,7 @@ namespace IS_AdvokatskeKancelarije.Data
         public DbSet<Trial> Trials { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<DocumentChunk> DocumentChunks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,6 +52,19 @@ namespace IS_AdvokatskeKancelarije.Data
                 .HasMany(c => c.Documents)
                 .WithOne(d => d.Case)
                 .HasForeignKey(d => d.CaseId);
+
+            // Document to DocumentChunk relationship (brisanjem dokumenta brišu se i chunkovi)
+            modelBuilder.Entity<Document>()
+                .HasMany(d => d.Chunks)
+                .WithOne(c => c.Document)
+                .HasForeignKey(c => c.DocumentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DocumentChunk>()
+                .HasIndex(c => c.DocumentId);
+
+            modelBuilder.Entity<DocumentChunk>()
+                .HasIndex(c => c.CaseId);
 
             // User to Invoice relationship
             modelBuilder.Entity<User>()

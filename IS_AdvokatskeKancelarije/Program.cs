@@ -29,12 +29,34 @@ builder.Services.AddScoped<IMeetingRepository, MeetingRepository>();
 builder.Services.AddScoped<ITrialsRepository,TrialsRepository>();
 builder.Services.AddScoped<IInvoicesRepository,InvoicesRepository>();
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddSingleton<FileStorageService>();
+
+
+// AI pretraga dokumenata (izdvajanje teksta, chunking, embeddings, pretraga)
+builder.Services.Configure<OllamaSettings>(builder.Configuration.GetSection("Ollama"));
+builder.Services.AddHttpClient<OllamaService>((sp, client) =>
+{
+    var settings = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<OllamaSettings>>().Value;
+    client.BaseAddress = new Uri(settings.BaseUrl);
+    client.Timeout = TimeSpan.FromMinutes(5);
+});
+builder.Services.AddSingleton<TextExtractionService>();
+builder.Services.AddSingleton<ChunkingService>();
+builder.Services.AddSingleton<IndexingQueue>();
+builder.Services.AddScoped<DocumentIndexer>();
+builder.Services.AddScoped<SearchService>();
+builder.Services.Configure<RagSettings>(builder.Configuration.GetSection("Rag"));
+builder.Services.AddScoped<RagService>();
+builder.Services.AddHostedService<IndexingWorker>();
 
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings")
     );
 
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(cfg => {
+    cfg.LicenseKey = "Licence_KEY";
+    cfg.AddMaps(typeof(Program).Assembly);
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -82,9 +104,11 @@ builder.Services.AddSwaggerGen(options =>
 var app = builder.Build();
 
 app.UseCors(policy =>
-    policy.WithOrigins("http://localhost:4200") // Angular dev server
+    policy.WithOrigins("http://localhost:4200")//https://melina-bipyramidal-tyler.ngrok-free.dev // Angular dev server
           .AllowAnyMethod()
-          .AllowAnyHeader());
+          .AllowAnyHeader()
+          .AllowCredentials()
+          .WithExposedHeaders("Content-Disposition"));
 
 
 // Configure the HTTP request pipeline.
@@ -94,12 +118,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+app.UseDefaultFiles();
+
+app.UseStaticFiles();
+
+app.UseRouting();
+
+
+
 
 app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapFallbackToFile("index.html");
 
 app.Run();

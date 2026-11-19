@@ -29,6 +29,13 @@ namespace IS_AdvokatskeKancelarije.Repositories
             return "Document Created";
         }
 
+        public async Task<Document> AddDocumentWithFile(Document document)
+        {
+            _context.Documents.Add(document);
+            await _context.SaveChangesAsync();
+            return document;
+        }
+
         public void Delete(Guid id)
         {
             var document = _context.Documents.Find(id);
